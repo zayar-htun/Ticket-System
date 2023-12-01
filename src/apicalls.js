@@ -1,7 +1,7 @@
 import request from "superagent";
 
 const api = "https://dev.gigagates.com/market-hub-backend/";
-const token = "60e1bea6-08f9-4c78-979d-c479437b55eb";
+const token = "e63fd75f-398b-4599-907e-2b1f08a596ed";
 
 export async function getallticket() {
     const res = await fetch(`${api}/v1/ticket/`, {

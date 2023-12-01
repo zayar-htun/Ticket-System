@@ -5,52 +5,48 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import TablePagination from "@mui/material/TablePagination";
 import Paper from "@mui/material/Paper";
 import { useNavigate } from "react-router-dom";
-import moment from 'moment';
+import moment from "moment";
 
 function createData(name, calories, fat, carbs, protein) {
     return { name, calories, fat, carbs, protein };
 }
 
-export default function OpenTable({tickets}) {
+export default function OpenTable({ tickets }) {
     const navigate = useNavigate();
-    const [items, setItems] = React.useState([
-        {
-            guid: 1,
-            name: "Bar Nyar Ticket",
-            ticket: "1111",
-            category: "accounting",
-            priority: 6,
-            solutionProvider:"Zay Yar Tun",
-            createdAt: "28/4/2000",
-            updatedAt: "29/4/2023",
-            updatedBy: "U Zay",
-        },
-        {
-            guid: 2,
-            name: "Bar Bar Ticket",
-            ticket: "1111",
-            category: "billing",
-            priority: 9,
-            solutionProvider:"Kyaw Sithu Win",
-            createdAt: "28/4/2000",
-            updatedAt: "29/4/2023",
-            updatedBy: "U Zay",
-        },
-        {
-            guid: 3,
-            name: "Nyar Nyar Ticket",
-            ticket: "1111",
-            category: "software ",
-            priority: 12,
-            solutionProvider:"Maung Win",
-            createdAt: "28/4/2000",
-            updatedAt: "29/4/2023",
-            updatedBy: "U Zay",
-        },
-    ]);
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
+    React.useEffect(() => {
+        // Retrieve page and rowsPerPage from the URL parameters
+        const urlParams = new URLSearchParams(location.search);
+        const pageParam = parseInt(urlParams.get('page'), 10) || 0;
+        const rowsPerPageParam = parseInt(urlParams.get('rowsPerPage'), 10) || 7;
+
+        // Set the retrieved values as the initial state
+        setPage(pageParam);
+        setRowsPerPage(rowsPerPageParam);
+    }, [location.search]);
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+        // Update the URL with the new page value
+        navigate(`?page=${newPage}&rowsPerPage=${rowsPerPage}`);
+    };
+
+    // const handleChangeRowsPerPage = event => {
+    //     setRowsPerPage(parseInt(event.target.value, 10));
+    //     setPage(0);
+    // };
+    const handleChangeRowsPerPage = event => {
+        const newRowsPerPage = parseInt(event.target.value, 10);
+        setRowsPerPage(newRowsPerPage);
+        setPage(0);
+        // Update the URL with the new rowsPerPage value
+        navigate(`?page=0&rowsPerPage=${newRowsPerPage}`);
+    };
 
     return (
         <TableContainer component={Paper}>
@@ -66,23 +62,30 @@ export default function OpenTable({tickets}) {
                         <TableCell align="right">Created_at</TableCell>
                         <TableCell align="right">Updated_at</TableCell>
                         <TableCell align="right">Updated_By</TableCell>
-                        
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {tickets.filter(tic => tic.status === "open").map(row => (
-                        <TableRow
-                            key={row.guid}
-                            sx={{
-                                "&:last-child td, &:last-child th": {
-                                    border: 0,
-                                },
-                            }}
-                            onClick={() => {
-                                navigate(`/ticketdetail/${row.ticketId}/${row.guid}`);
-                            }}
-                        >
-                            <TableCell component="th" scope="row">
+                    {tickets
+                        .filter(tic => tic.status === "open")
+                        .slice(
+                            page * rowsPerPage,
+                            page * rowsPerPage + rowsPerPage
+                        )
+                        .map(row => (
+                            <TableRow
+                                key={row.guid}
+                                sx={{
+                                    "&:last-child td, &:last-child th": {
+                                        border: 0,
+                                    },
+                                }}
+                                onClick={() => {
+                                    navigate(
+                                        `/ticketdetail/${row.ticket}/${row.guid}`
+                                    );
+                                }}
+                            >
+                                <TableCell component="th" scope="row">
                                 {row.title}
                             </TableCell>
                             <TableCell align="right">{row.ticket}</TableCell>
@@ -93,10 +96,19 @@ export default function OpenTable({tickets}) {
                             <TableCell align="right">{moment(row.createdOn).format('DD/MM/YYYY h:mm:ss a')}</TableCell>
                             <TableCell align="right">{moment(row.updatedOn).format('DD/MM/YYYY h:mm:ss a')}</TableCell>
                             <TableCell align="right">{row.name}</TableCell>
-                        </TableRow>
-                    ))}
+                            </TableRow>
+                        ))}
                 </TableBody>
             </Table>
+            <TablePagination
+                rowsPerPageOptions={[7, 14, 21]}
+                component="div"
+                count={tickets.filter(tic => tic.status === "open").length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+            />
         </TableContainer>
     );
 }
