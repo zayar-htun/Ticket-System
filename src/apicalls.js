@@ -130,7 +130,7 @@ export async function getAssignUser() {
 }
 
 export async function getTransferUser(ticketGuid, ticketAssignGuid) {
-    const res = await fetch(`${api}v1/ticket/comment/createTicketComment`, {
+    const res = await fetch(`${api}v1/ticket/task/createTicketTaskForm`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

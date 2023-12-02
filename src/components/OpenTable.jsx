@@ -287,14 +287,20 @@ export default function OpenTable({ tickets }) {
                             .filter(
                                 tic =>
                                     tic.status === "open" &&
-                                    ((tic.title &&
-                                        tic.title
+                                    ((tic.category &&
+                                        tic.category
                                             .toLowerCase()
                                             .includes(
                                                 searchQuery.toLowerCase()
                                             )) ||
                                         (tic.ticket &&
                                             tic.ticket
+                                                .toLowerCase()
+                                                .includes(
+                                                    searchQuery.toLowerCase()
+                                                )) ||
+                                        (tic.companyName &&
+                                            tic.companyName
                                                 .toLowerCase()
                                                 .includes(
                                                     searchQuery.toLowerCase()
