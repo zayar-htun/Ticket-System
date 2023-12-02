@@ -29,6 +29,7 @@ export default function Assign() {
     const [categories, setCategories] = useState([]);
     const [assigns, setAssigns] = useState([]);
     const [persons, setPersons] = useState([]);
+    
     const [anchorEls, setAnchorEls] = useState(
         Array(categories.length).fill(null)
     );
